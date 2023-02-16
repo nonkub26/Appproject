@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyCard extends StatelessWidget {
+  final auth = FirebaseAuth.instanceFor;
   final double balance;
   final int cardNumber;
   final int expiryMonth;
