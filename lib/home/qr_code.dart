@@ -1,3 +1,6 @@
+import 'package:appproject/constants/otherconstant.dart';
+import 'package:appproject/model/user.dart';
+import 'package:appproject/services/user.service.dart';
 import 'package:appproject/themes/color.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,16 @@ class MyQrCode extends StatefulWidget {
 }
 
 class _MyQrCodeState extends State<MyQrCode> {
+  final _controller = PageController();
+  late Future<User> currentUser;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentUser = UserService().getUser(id);
+  }
+
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
@@ -91,39 +104,48 @@ class _MyQrCodeState extends State<MyQrCode> {
                   ),
                 ),
                 SizedBox(height: 35),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      "images/myqr.png",
-                      height: 250,
-                      width: 250,
-                    ),
-                    SizedBox(height: 25),
-                    Text(
-                      "สแกน QR Code เพื่อโอนเข้าบัญชี",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 255, 196, 0),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "ชื่อ XXXXX XXXXXX",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "เลขอ้างอิง XXXXX XXXXXX",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
+                FutureBuilder<User>(
+                    future: currentUser,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "images/myqr01.png",
+                              height: 250,
+                              width: 250,
+                            ),
+                            SizedBox(height: 25),
+                            Text(
+                              "สแกน QR Code เพื่อโอนเข้าบัญชี",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 255, 196, 0),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'ชื่อ  ${snapshot.data!.name}',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'เลขที่อ้างอิง  ${snapshot.data!.id}',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+                      return const CircularProgressIndicator();
+                    }),
                 SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

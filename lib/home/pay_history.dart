@@ -1,3 +1,7 @@
+import 'package:appproject/constants/otherconstant.dart';
+import 'package:appproject/model/transaction.dart';
+import 'package:appproject/model/user.dart';
+import 'package:appproject/services/user.service.dart';
 import 'package:appproject/util/my_history.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +16,14 @@ class MyPayHistory extends StatefulWidget {
 }
 
 class _MyPayHistoryState extends State<MyPayHistory> {
+  late Future<List<Transaction>> transactions;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    transactions = UserService().getTransactionHistory(id);
+  }
+
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
@@ -116,98 +128,36 @@ class _MyPayHistoryState extends State<MyPayHistory> {
 
                 SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child:
-                        // ListView.builder(
-                        //   itemBuilder: (_, index) {
-                        //     return
-                        Column(
-                      children: [
-                        //ประวัติการใช้จ่าย
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'ร้านป้าไข่ไก่ทอด',
-                            TextID: 'ID : 1654684123',
-                            TextDay: 'วันที่ 31 ธันวาคม 2565',
-                            Price: '฿ 45.00',
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'หวานเย็น',
-                            TextID: 'ID : 1645684864',
-                            TextDay: 'วันที่ 30 ธันวาคม 2565',
-                            Price: '฿ 10.00',
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'ก๋วยเตี๋ยวตามสั่ง',
-                            TextID: 'ID : 1634895129',
-                            TextDay: 'วันที่ 30 ธันวาคม 2565',
-                            Price: '฿ 35.00',
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'ก๋วยเตี๋ยวตามสั่ง',
-                            TextID: 'ID : 1634895129',
-                            TextDay: 'วันที่ 30 ธันวาคม 2565',
-                            Price: '฿ 35.00',
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'ก๋วยเตี๋ยวตามสั่ง',
-                            TextID: 'ID : 1634895129',
-                            TextDay: 'วันที่ 30 ธันวาคม 2565',
-                            Price: '฿ 35.00',
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, "payment");
-                          },
-                          child: MyHistory(
-                            NameHistory: 'ก๋วยเตี๋ยวตามสั่ง',
-                            TextID: 'ID : 1634895129',
-                            TextDay: 'วันที่ 30 ธันวาคม 2565',
-                            Price: '฿ 35.00',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(15.0),
+                      child: FutureBuilder(
+                        future: transactions,
+                        builder: ((context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, "payment");
+                                  },
+                                  child: MyHistory(
+                                    Operation: snapshot.data![index].operation,
+                                    NameHistory: snapshot.data![index].reference,
+                                    TextID: snapshot.data![index].userId,
+                                    TextDay: snapshot.data![index].createdAt.toString(),
+                                    Price: snapshot.data![index].amount.toString(),
+                                  ),
+                                );
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return const CircularProgressIndicator();
+                        }),
+                      )),
                 ),
               ],
             ),

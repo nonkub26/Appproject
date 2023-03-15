@@ -12,9 +12,10 @@ class InputWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 10),
       padding: EdgeInsets.symmetric(horizontal: 15),
       height: 55,
+      width: 300,
       decoration: BoxDecoration(
         color: Color(0xFFF5F9FD),
         borderRadius: BorderRadius.circular(10),
@@ -37,7 +38,7 @@ class InputWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(
                 left: 10), // เป็นการเพิ่มกล่องว่างๆเพื่อเว้นระยะห่าง
-            width: 250,
+            width: 200,
             child: TextFormField(
               decoration: InputDecoration(
                 hintText: textHint,

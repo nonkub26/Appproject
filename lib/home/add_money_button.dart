@@ -9,7 +9,10 @@ class AddMoneyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onTap(amount),
+      onTap: () {
+        print(amount);
+        onTap(amount);
+      },
       // onTap: () {
       //   Navigator.pushNamed(context, AddMony);
       // },

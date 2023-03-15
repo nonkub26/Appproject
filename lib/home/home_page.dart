@@ -2,8 +2,9 @@
 
 import 'dart:convert';
 
+import 'package:appproject/constants/otherconstant.dart';
 import 'package:appproject/model/user.dart';
-import 'package:appproject/service/api.dart';
+import 'package:appproject/services/user.service.dart';
 import 'package:appproject/themes/color.dart';
 import 'package:appproject/util/my_button.dart';
 import 'package:appproject/util/my_card.dart';
@@ -13,11 +14,13 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-Future<User> getUser() async {
-  var id = "63ee40e5ff687ceebb9eb59c";
-  var response = API().getCurrentUser(id);
-  return User.fromJson(jsonDecode(response.data));
-}
+import '../constants/http.constant.dart';
+
+// Future<User> getUser() async {
+//   var id = "63ee40e5ff687ceebb9eb59c";
+//   var response = UserService().getUser(id);
+//   return User.fromJson(jsonDecode(response.data));
+// }
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +32,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _counter = 0;
   final _controller = PageController();
-  //final auth = FirebaseAuth.instanceFor;
 
   late Future<User> currentUser;
 
@@ -37,9 +39,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    currentUser = getUser();
-    print("5555555");
-    print(currentUser);
+    currentUser = UserService().getUser(id);
   }
 
   @override
@@ -169,41 +169,42 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'ยอดเงิน',
+                                  'ยอดเงิน ',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 25,
                                   ),
                                 ),
                                 Image.asset(
-                                  'images/visa.png',
+                                  "images/logonvc (1).png",
                                   height: 50,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 5),
                             Container(
                               child: Text(
-                                '  \$  ' + _counter.toString(),
+                                '  \฿  ${snapshot.data!.balance}',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
+                                  fontSize: 45,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 15),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  123456.toString(),
+                                  ' ${snapshot.data!.name}',
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
                                 ),
                                 Text(
-                                  26.toString() + '/' + 03.toString(),
+                                  ' ${snapshot.data!.userType}',
+                                  // 26.toString() + '/' + 03.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),

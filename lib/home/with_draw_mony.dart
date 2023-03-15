@@ -1,10 +1,13 @@
 import 'package:appproject/data/amount.dart';
 import 'package:appproject/home/add_money_button.dart';
+import 'package:appproject/model/user.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../constants/otherconstant.dart';
 import '../login/input_widget.dart';
+import '../services/user.service.dart';
 import '../themes/color.dart';
 import '../util/my_button-add-mony.dart';
 import '../util/my_card.dart';
@@ -22,6 +25,7 @@ Amount amount = Amount(money: 'money');
 
 class _MyWithDrawMonyState extends State<MyWithDrawMony> {
   int _counter = 0;
+  late Future<User> currentUser;
 
   void _incrementCounter(int amount) {
     print("aaaaa " + amount.toString());
@@ -31,8 +35,9 @@ class _MyWithDrawMonyState extends State<MyWithDrawMony> {
   }
 
   incrementAmount(int amount) {
+    print("Amount $amount");
     setState(() {
-      _counter -= amount;
+      _counter += amount;
     });
   }
 
@@ -40,6 +45,13 @@ class _MyWithDrawMonyState extends State<MyWithDrawMony> {
     setState(() {
       _counter = 0;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentUser = UserService().getUser(id);
   }
 
   @override
@@ -152,55 +164,66 @@ class _MyWithDrawMonyState extends State<MyWithDrawMony> {
                       color: Color.fromARGB(255, 39, 38, 39),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'ยอดเงิน',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                              ),
-                            ),
-                            Image.asset(
-                              'images/visa.png',
-                              height: 50,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          '  \$  ' + _counter.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              123456.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              26.toString() + '/' + 03.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    child: FutureBuilder<User>(
+                        future: currentUser,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'ยอดถอนเงิน',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        "images/logonvc (1).png",
+                                        height: 50,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    '          \฿  ' + _counter.toString(),
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'ยอดเงิน'.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        '   ${snapshot.data!.balance}  บาท',
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ]);
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return const CircularProgressIndicator();
+                        }),
                   ),
                 ),
 
@@ -268,6 +291,7 @@ class _MyWithDrawMonyState extends State<MyWithDrawMony> {
                       SizedBox(height: 45),
                       InkWell(
                         onTap: () {
+                          UserService().withdraw(id, _counter);
                           Navigator.pushNamed(context, "homePage");
                         },
                         child: Container(
